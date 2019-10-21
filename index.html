@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Visualization for McDonald's</title>
+</head>
+
+<style>
+body {
+    background-image: url('mcdonalds.png');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
+    /* background-size: cover; */
+}
+h1 {
+    text-align: center
+}</style>
+
+<body>
+    <h1 style = color:goldenrod>Data Analysis of McDonald's Burger Sales</h1>
+
+    <a href="Data Analysis of McDonald.pdf" download>Please click here to download the pdf version</a>
+
+    <h2>Micro Trends of Daily Sales</h2>
+    <!-- Let's see the chart here-->
+    <div id="chartPlaceHolder1"></div>
+
+    <!-- External imports begin -->
+    <script src = "https://code.highcharts.com/highcharts.js"></script>
+    <script src = "https://code.highcharts.com/modules/data.js"></script>
+    <!-- External imports end -->
+    <script>
+    Highcharts.chart('chartPlaceHolder1', {
+        chart: {
+            type:'line',
+            backgroundColor: "rgba(0,0,0,0.07)"
+        },
+        data: {
+            csvURL: 'http://127.0.0.1:5500/HW2/weekday_sales.csv',
+        },
+        title: {
+            text: "Total Sales Each Day of Week"
+        },
+        subtitle: {
+            text: "Only 01/2016 data for generation this plot"
+        },
+        xAxis: {
+            title: {
+                text: 'Day of Week'
+            }
+        },
+        yAxis: {
+            title: {
+                text: 'Total Sales (USD)'
+            }
+        },
+    });
+    </script>
+    
+    <p>From the line chart above, we can see that the sales of burger is relatively lower during weekends. McDonald is a fast food company. Thus, it
+        is reasonable that our customer prefer to come during weekdays when they are too busy to squeeze time for dinner. During weekends, they would have
+        many other alternatives for their leisure time.
+    </p>
+
+    <h2>Overall Distribution of Burger Sales in Different Regions</h2>
+    <div id="chartPlaceHolder2"></div>
+    <script>
+    Highcharts.chart('chartPlaceHolder2', {
+        chart: {
+            type: 'bar',
+            backgroundColor: "rgba(0,0,0,0.07)"
+        },
+        title: {
+            text: 'Sales(USD) of Each Burger in Different Regions'
+        },
+        subtitle: {
+            text: "Only 01/2016 data for generation this plot"
+        },
+        xAxis: {
+            title: {
+                text: "Locations"
+            }
+        },
+        yAxis: {
+            title: {
+                text: "Burger Sales(USD)"
+            }
+        },
+        data: {
+            csvURL: 'http://127.0.0.1:5500/HW2/place_kind_sum_up_df.csv',
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        }
+    });
+    </script>
+    <p>The bar plot displays the sales of each burger in all five different regions. Based on the information in the chart, all five regions have an almost equal
+        distribution of all three kinds of burger. And the total sales of burger in all five regions are fairly equal. This phenomenon indicates that there is
+        no huge differences between the popularity of each burger over all five regions. Thus, we are relaxed to deploy the same business strategy to all five
+        regions.
+    </p>
+
+    <h2>Influence of the Impossible Burger</h2>
+    <div id="chartPlaceHolder3"></div>
+    <script>
+    Highcharts.chart('chartPlaceHolder3', {
+        chart: {
+            type:'line',
+            backgroundColor: "rgba(0,0,0,0.07)"
+        },
+        data: {
+            csvURL: 'http://127.0.0.1:5500/HW2/overall_sales.csv',
+        },
+        title: {
+            text: "Overall Burger Sales Pattern"
+        },
+        subtitle: {
+            text: "Data ranges from 01/2016 to 09/2019"
+        },
+        // xAxis: {
+        //     title: {
+        //         text: 'month'
+        //     }
+        // },
+
+        yAxis: {
+            title: {
+                text: 'Total Sales (USD)'
+            }
+        }
+    });
+    </script>
+
+    <div id="chartPlaceHolder4"></div>
+    <script>
+    Highcharts.chart('chartPlaceHolder4', {
+        chart: {
+            type:'line',
+            backgroundColor: "rgba(0,0,0,0.07)"
+        },
+        data: {
+            csvURL: 'http://127.0.0.1:5500/HW2/burger_sales.csv',
+        },
+        title: {
+            text: "Sales Pattern of Each Burger"
+        },
+        subtitle: {
+            text: "Data ranges from 01/2016 to 09/2019"
+        },
+        // xAxis: {
+        //     title: {
+        //         text: 'month'
+        //     }
+        // },
+
+        yAxis: {
+            title: {
+                text: 'Total Sales (USD)'
+            }
+        }
+    });
+    </script>
+
+
+
+    <div id="chartPlaceHolder5"></div>
+    <script>
+    Highcharts.chart('chartPlaceHolder5', {
+        chart: {
+            type:'line',
+            backgroundColor: "rgba(0,0,0,0.07)"
+        },
+        data: {
+            csvURL: 'http://127.0.0.1:5500/HW2/place_sales.csv',
+        },
+        title: {
+            text: "Sales Pattern in Each Region"
+        },
+        subtitle: {
+            text: "Data ranges from 01/2016 to 09/2019"
+        },
+        // xAxis: {
+        //     title: {
+        //         text: 'month'
+        //     }
+        // },
+
+        yAxis: {
+            title: {
+                text: 'Total Sales (USD)'
+            }
+        }
+    });
+    </script>
+    <p> From the "Overall Burger Sales Pattern", there is a clear drop of sales betweeen Sep. 2018 and Oct. 2018, which is exactly the month that "the Impossible
+        Burger" was introduced. Thus the affect of "the Impossible Burger" on McDonald's businees is phenomenal. Some of our customers switch to Burger King for
+        the "Impossible Burger". If we zoom in to "Sales Pattern of Each Burger" and "Sales Pattern in Each Region" and interact with the two tables, we can see that
+         proportions of sales dropped are very even for each burger and in each region. Based on the insight above, the conclusion can be made that the attraction
+          of “the Impossible Burger” to McDonald’s customers are insensitive to both burger kinds and regions. Thus, market vacancy for a Veggie burger 
+          (“the Impossible Burger” is a Veggie burger) definitely exists and McDonald’s should take action in response to it. Since it is a kind of Veggie burger,
+         McDonald's may also consider introducing a Veggie burger to compete against it. Also, as the effect of "the Impossible Burger" on McDonald's business
+        are similar across the country, the introduction of McDonald's own Veggie burger should be deployed equally across the nation.
+    </p>
+
+
+</body>
+</html>
