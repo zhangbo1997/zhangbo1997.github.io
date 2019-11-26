@@ -1,0 +1,210 @@
+<!-- Styles -->
+<style>
+    #chartdiv {
+      max-width: 100%;
+      height: 600px;
+      background-color:#fbebdb;
+    }
+    </style>
+    
+    <!-- Resources -->
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/maps.js"></script>
+    <script src="https://www.amcharts.com/lib/4/geodata/continentsLow.js"></script>
+    <script src="https://www.amcharts.com/lib/4/geodata/worldLow.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/frozen.js"></script>
+    
+    <!-- Chart code -->
+    <script>
+    am4core.ready(function() {
+    
+    // Themes begin
+    am4core.useTheme(am4themes_frozen);
+    // Themes end
+    
+    // Create map instance
+    var chart = am4core.create("chartdiv", am4maps.MapChart);
+    var interfaceColors = new am4core.InterfaceColorSet();
+    
+    try {
+        chart.geodata = am4geodata_worldLow;
+    }
+    catch (e) {
+        chart.raiseCriticalError(new Error("Map geodata could not be loaded. Please download the latest <a href=\"https://www.amcharts.com/download/download-v4/\">amcharts geodata</a> and extract its contents into the same directory as your amCharts files."));
+    }
+    
+    
+    var label = chart.createChild(am4core.Label)
+    label.text = "Box Office returns of the original release of \"Titanic\" (1997). \n Bullet size uses logarithmic scale.";
+    label.fontSize = 12;
+    label.align = "left";
+    label.valign = "bottom"
+    label.fill = am4core.color("#927459");
+    label.background = new am4core.RoundedRectangle()
+    label.background.cornerRadius(10,10,10,10);
+    label.padding(10,10,10,10);
+    label.marginLeft = 30;
+    label.marginBottom = 30;
+    label.background.strokeOpacity = 0.3;
+    label.background.stroke =am4core.color("#927459");
+    label.background.fill = am4core.color("#f9e3ce");
+    label.background.fillOpacity = 0.6;
+    
+    var dataSource = chart.createChild(am4core.TextLink)
+    dataSource.text = "Data source: IMDbPro";
+    dataSource.fontSize = 12;
+    dataSource.align = "left";
+    dataSource.valign = "top"
+    dataSource.urlTarget = "_blank";
+    dataSource.fill = am4core.color("#927459");
+    dataSource.padding(10,10,10,10);
+    dataSource.marginLeft = 30;
+    dataSource.marginTop = 30;
+    
+    // Set projection
+    chart.projection = new am4maps.projections.Orthographic();
+    chart.panBehavior = "rotateLongLat";
+    chart.padding(20,20,20,20);
+    
+    // Add zoom control
+    chart.zoomControl = new am4maps.ZoomControl();
+    
+    var homeButton = new am4core.Button();
+    homeButton.events.on("hit", function(){
+      chart.goHome();
+    });
+    
+    homeButton.icon = new am4core.Sprite();
+    homeButton.padding(7, 5, 7, 5);
+    homeButton.width = 30;
+    homeButton.icon.path = "M16,8 L14,8 L14,16 L10,16 L10,10 L6,10 L6,16 L2,16 L2,8 L0,8 L8,0 L16,8 Z M16,8";
+    homeButton.marginBottom = 10;
+    homeButton.parent = chart.zoomControl;
+    homeButton.insertBefore(chart.zoomControl.plusButton);
+    
+    chart.backgroundSeries.mapPolygons.template.polygon.fill = am4core.color("#bfa58d");
+    chart.backgroundSeries.mapPolygons.template.polygon.fillOpacity = 1;
+    chart.deltaLongitude = 20;
+    chart.deltaLatitude = -20;
+    
+    
+    // Create map polygon series
+    
+    var shadowPolygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+    shadowPolygonSeries.geodata = am4geodata_continentsLow;
+    
+    try {
+        shadowPolygonSeries.geodata = am4geodata_continentsLow;
+    }
+    catch (e) {
+        shadowPolygonSeries.raiseCriticalError(new Error("Map geodata could not be loaded. Please download the latest <a href=\"https://www.amcharts.com/download/download-v4/\">amcharts geodata</a> and extract its contents into the same directory as your amCharts files."));
+    }
+    
+    shadowPolygonSeries.useGeodata = true;
+    shadowPolygonSeries.dx = 2;
+    shadowPolygonSeries.dy = 2;
+    shadowPolygonSeries.mapPolygons.template.fill = am4core.color("#000");
+    shadowPolygonSeries.mapPolygons.template.fillOpacity = 0.2;
+    shadowPolygonSeries.mapPolygons.template.strokeOpacity = 0;
+    shadowPolygonSeries.fillOpacity = 0.1;
+    shadowPolygonSeries.fill = am4core.color("#000");
+    
+    
+    // Create map polygon series
+    var polygonSeries = chart.series.push(new am4maps.MapPolygonSeries());
+    polygonSeries.useGeodata = true;
+    
+    polygonSeries.calculateVisualCenter = true;
+    polygonSeries.tooltip.background.fillOpacity = 0.2;
+    polygonSeries.tooltip.background.cornerRadius = 20;
+    
+    var template = polygonSeries.mapPolygons.template;
+    template.nonScalingStroke = true;
+    template.fill = am4core.color("#f9e3ce");
+    template.stroke = am4core.color("#e2c9b0");
+    
+    polygonSeries.calculateVisualCenter = true;
+    template.propertyFields.id = "id";
+    template.tooltipPosition = "fixed";
+    template.fillOpacity = 1;
+    
+    template.events.on("over", function (event) {
+      if (event.target.dummyData) {
+        event.target.dummyData.isHover = true;
+      }
+    })
+    template.events.on("out", function (event) {
+      if (event.target.dummyData) {
+        event.target.dummyData.isHover = false;
+      }
+    })
+    
+    var hs = polygonSeries.mapPolygons.template.states.create("hover");
+    hs.properties.fillOpacity = 1;
+    hs.properties.fill = am4core.color("#deb7ad");
+    
+    
+    var graticuleSeries = chart.series.push(new am4maps.GraticuleSeries());
+    graticuleSeries.mapLines.template.stroke = am4core.color("#fff");
+    graticuleSeries.fitExtent = false;
+    graticuleSeries.mapLines.template.strokeOpacity = 0.2;
+    graticuleSeries.mapLines.template.stroke = am4core.color("#fff");
+    
+    
+    var measelsSeries = chart.series.push(new am4maps.MapPolygonSeries())
+    measelsSeries.tooltip.background.fillOpacity = 0;
+    measelsSeries.tooltip.background.cornerRadius = 20;
+    measelsSeries.tooltip.autoTextColor = false;
+    measelsSeries.tooltip.label.fill = am4core.color("#000");
+    measelsSeries.tooltip.dy = -5;
+    
+    var measelTemplate = measelsSeries.mapPolygons.template;
+    measelTemplate.fill = am4core.color("#bf7569");
+    measelTemplate.strokeOpacity = 0;
+    measelTemplate.fillOpacity = 0.75;
+    measelTemplate.tooltipPosition = "fixed";
+    
+    
+    
+    var hs2 = measelsSeries.mapPolygons.template.states.create("hover");
+    hs2.properties.fillOpacity = 1;
+    hs2.properties.fill = am4core.color("#86240c");
+    
+    polygonSeries.events.on("inited", function () {
+      polygonSeries.mapPolygons.each(function (mapPolygon) {
+        var count = data[mapPolygon.id];
+
+        function getBaseLog(x, y) {
+            return Math.log(y) / Math.log(x);
+        }
+        if (count > 0) {
+          var polygon = measelsSeries.mapPolygons.create();
+          //polygon.multiPolygon = am4maps.getCircle(mapPolygon.visualLongitude, mapPolygon.visualLatitude, Math.max(0.2, Math.log(count) * Math.LN10 / 10));
+          polygon.multiPolygon = am4maps.getCircle(mapPolygon.visualLongitude, mapPolygon.visualLatitude, getBaseLog(1.1, count*1000/1845646818)* Math.LN2 / 10);
+
+          polygon.tooltipText = mapPolygon.dataItem.dataContext.name + ": $" + count.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+          mapPolygon.dummyData = polygon;
+          polygon.events.on("over", function () {
+            mapPolygon.isHover = true;
+          })
+          polygon.events.on("out", function () {
+            mapPolygon.isHover = false;
+          })
+        }
+        else {
+          mapPolygon.tooltipText = mapPolygon.dataItem.dataContext.name + ": no data";
+          mapPolygon.fillOpacity = 0.9;
+        }
+    
+      })
+    })
+    
+    
+    
+    var data = {"US": 600788188, "AT": 11666369, "BE": 20701637, "BG": 1024062, "HR": 1658271, "SK": 3152309, "DK": 13322975, "": 640194, "EG": 4552211, "EE": 472529, "FI": 8770850, "FR": 129127181, "DE": 129974110, "GR": 12939602, "HU": 2223043, "IS": 1082630, "IL": 8538685, "IT": 67953353, "JO": 419652, "LV": 315752, "LB": 2243454, "LT": 557107, "NL": 27024273, "NO": 11067392, "PL": 14078241, "PT": 5814394, "RO": 1917855, "SI": 1460506, "NG": 8051275, "ES": 44103989, "SE": 22088384, "CH": 19449406, "TR": 10423522, "AE": 2940983, "GB": 114063718, "YU": 1293350, "AR": 23269046, "BO": 1127643, "BR": 70460123, "CL": 6179457, "CO": 5349365, "DO": 578917, "EC": 1201929, "JM": 646208, "MX": 27033554, "PY": 406426, "PE": 2648784, "PR": 5933840, "UY": 2137938, "VE": 4651253, "AU": 38891987, "HK": 15162878, "IN": 12749919, "ID": 2989269, "JP": 201389568, "MY": 2764733, "NZ": 7599048, "PH": 4841409, "RU": 6956300, "SG": 4161529, "KR": 17287679, "TW": 24614481, "TH": 4783417, "CN": 43928666}
+    
+    }); // end am4core.ready()
+    </script>
+    
+    <!-- HTML -->
+    <div id="chartdiv"></div>
